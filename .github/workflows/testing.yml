@@ -24,6 +24,7 @@ jobs:
       # Configure your application to use the proxy
       - name: Run tests with proxy
         run: |
+          set -x
           # Set proxy environment variables
           export HTTP_PROXY=${{ steps.mitmproxy.outputs.proxy-url }}
           export HTTPS_PROXY=${{ steps.mitmproxy.outputs.proxy-url }}
