@@ -9,12 +9,12 @@ jobs:
     
     steps:
       - name: Checkout
-        uses: actions/checkout@v0.0.7
+        uses: actions/checkout@v4
       
       # Start mitmproxy logging
       - name: Start mitmproxy
         id: mitmproxy
-        uses: yaegashi/mitmproxy-logger-action@v1
+        uses: yaegashi/mitmproxy-logger-action@v0.0.7
         with:
           enabled: true
           listen-host: '127.0.0.1'
