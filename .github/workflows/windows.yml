@@ -1,8 +1,7 @@
-name: Example usage of mitmproxy-logger-action on Windows
+name: Testing mitmproxy on Windows
 
 on:
-  push:
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   test-with-mitmproxy-windows:
