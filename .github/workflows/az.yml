@@ -3,6 +3,10 @@ name: Testing Azure CLI
 on:
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: write
+
 jobs:
   test-with-mitmproxy:
     runs-on: ubuntu-latest
