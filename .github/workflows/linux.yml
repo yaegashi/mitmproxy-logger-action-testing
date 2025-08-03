@@ -27,5 +27,5 @@ jobs:
           curl -v http://httpbin.org/get
           curl -v https://httpbin.org/get
         env:
-          HTTP_PROXY: ${{ steps.mitmproxy.outputs.proxy-url }}
-          HTTPS_PROXY: ${{ steps.mitmproxy.outputs.proxy-url }}
+          http_proxy: ${{ steps.mitmproxy.outputs.proxy-url }}
+          nttps_proxy: ${{ steps.mitmproxy.outputs.proxy-url }}

@@ -11,12 +11,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
-
-      # Start mitmproxy logging
       - name: Start mitmproxy
         id: mitmproxy
         uses: yaegashi/mitmproxy-logger-action@v0.0.15
@@ -31,15 +25,15 @@ jobs:
         run: |
           $proxy = '${{ steps.mitmproxy.outputs.proxy-url }}'
           [System.Net.WebRequest]::DefaultWebProxy = New-Object System.Net.WebProxy($proxy, $true)
-          Invoke-WebRequest -Uri "http://httpbin.org/get" -UseBasicParsing
-          Invoke-WebRequest -Uri "https://httpbin.org/get" -UseBasicParsing
+          Invoke-WebRequest -Uri "http://httpbin.org/get?id=powershell" -UseBasicParsing
+          Invoke-WebRequest -Uri "https://httpbin.org/get?id=powershell" -UseBasicParsing
         continue-on-error: true
 
       - name: Run PowerShell Core (.NET HttpClient)
         shell: pwsh
         run: |
-          Invoke-WebRequest -Uri "http://httpbin.org/get"
-          Invoke-WebRequest -Uri "https://httpbin.org/get"
+          Invoke-WebRequest -Uri "http://httpbin.org/get?id=pwsh"
+          Invoke-WebRequest -Uri "https://httpbin.org/get?id=pwsh"
         continue-on-error: true
         env:
           http_proxy: ${{ steps.mitmproxy.outputs.proxy-url }}
@@ -48,8 +42,8 @@ jobs:
       - name: Run curl command (libcurl)
         shell: cmd
         run: |
-          curl -v http://httpbin.org/get
-          curl -v https://httpbin.org/get
+          curl -v "http://httpbin.org/get?id=curl"
+          curl -v "https://httpbin.org/get?id=curl"
         continue-on-error: true
         env:
           http_proxy: ${{ steps.mitmproxy.outputs.proxy-url }}
@@ -60,8 +54,8 @@ jobs:
         run: |
           try {
             netsh winhttp set proxy ${{ steps.mitmproxy.outputs.proxy-url }}
-            certutil -urlcache -split -f http://httpbin.org/get NUL
-            certutil -urlcache -split -f https://httpbin.org/get NUL
+            certutil -urlcache -split -f "http://httpbin.org/get?id=certutil" NUL
+            certutil -urlcache -split -f "https://httpbin.org/get?id=certutil" NUL
           } finally {
             netsh winhttp reset proxy
           }
