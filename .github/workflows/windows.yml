@@ -35,8 +35,8 @@ jobs:
         run: |
           try {
             netsh winhttp set proxy ${{ steps.mitmproxy.outputs.proxy-url }}
-            bitsadmin /transfer http "http://httpbin.org/get?id=bitsadmin" NUL
-            bitsadmin /transfer https "https://httpbin.org/get?id=bitsadmin" NUL
+            & bitsadmin /transfer http "http://httpbin.org/get?id=bitsadmin" (Join-Path $env:TEMP http.txt)
+            & bitsadmin /transfer https "https://httpbin.org/get?id=bitsadmin" (Join-Path $env:TEMP https.txt)
           } finally {
             netsh winhttp reset proxy
           }
