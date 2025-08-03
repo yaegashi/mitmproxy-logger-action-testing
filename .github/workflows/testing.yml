@@ -33,6 +33,6 @@ jobs:
           curl http://httpbin.org/get
           curl -k https://httpbin.org/get
 
-          ls -lR
+          ls -lR $GITHUB_WORKSPACE
       
       # mitmproxy will automatically stop and upload artifacts when the job completes
