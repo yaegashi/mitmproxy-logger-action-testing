@@ -1,4 +1,4 @@
-name: Testing mitmproxy on Linux
+name: Testing Azure CLI
 
 on:
   workflow_dispatch:
