@@ -19,42 +19,50 @@ jobs:
       # Start mitmproxy logging
       - name: Start mitmproxy
         id: mitmproxy
-        uses: yaegashi/mitmproxy-logger-action@v0.0.14
+        uses: yaegashi/mitmproxy-logger-action@v0.0.15
         with:
           enabled: true
           listen-host: '127.0.0.1'
           listen-port: '8080'
           passphrase: ${{ secrets.MITMPROXY_PASSPHRASE }}
 
-      - name: Set WinHTTP Proxy
-        shell: powershell
-        run: netsh winhttp set proxy ${{ steps.mitmproxy.outputs.proxy-url }}
-
-      # Configure your application to use the proxy
-      - name: Run tests with proxy
+      - name: Run Windows PowerShell (.NET HttpWebRequest)
         shell: powershell
         run: |
+          $proxy = '${{ steps.mitmproxy.outputs.proxy-url }}'
+          [System.Net.WebRequest]::DefaultWebProxy = New-Object System.Net.WebProxy($proxy, $true)
           Invoke-WebRequest -Uri "http://httpbin.org/get" -UseBasicParsing
           Invoke-WebRequest -Uri "https://httpbin.org/get" -UseBasicParsing
-          Invoke-RestMethod -Uri http://www.google.com
-          Invoke-RestMethod -Uri http://portal.azure.com
         continue-on-error: true
 
-      - name: Reset WinHTTP Proxy
-        shell: powershell
-        run: netsh winhttp reset proxy
-
-      # Alternative using curl on Windows (if available)
-      - name: Test with curl (if available)
-        shell: cmd
+      - name: Run PowerShell Core (.NET HttpClient)
+        shell: pwsh
         run: |
-          curl -v http://httpbin.org/get
-          curl -v https://httpbin.org/get
-          curl -k https://www.google.com
-          curl -k https://portal.azure.com
+          Invoke-WebRequest -Uri "http://httpbin.org/get"
+          Invoke-WebRequest -Uri "https://httpbin.org/get"
         continue-on-error: true
         env:
           http_proxy: ${{ steps.mitmproxy.outputs.proxy-url }}
           https_proxy: ${{ steps.mitmproxy.outputs.proxy-url }}
-      
-      # mitmproxy will automatically stop and upload artifacts when the job completes
+
+      - name: Run curl command (libcurl)
+        shell: cmd
+        run: |
+          curl -v http://httpbin.org/get
+          curl -v https://httpbin.org/get
+        continue-on-error: true
+        env:
+          http_proxy: ${{ steps.mitmproxy.outputs.proxy-url }}
+          https_proxy: ${{ steps.mitmproxy.outputs.proxy-url }}
+
+      - name: Run certutil command (WinHttp)
+        shell: powershell
+        run: |
+          try {
+            netsh winhttp set proxy ${{ steps.mitmproxy.outputs.proxy-url }}
+            certutil -urlcache -split -f http://httpbin.org/get NUL
+            certutil -urlcache -split -f https://httpbin.org/get NUL
+          } finally {
+            netsh winhttp reset proxy
+          }
+        continue-on-error: true
