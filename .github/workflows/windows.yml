@@ -20,25 +20,6 @@ jobs:
           listen-port: '8080'
           passphrase: ${{ secrets.MITMPROXY_PASSPHRASE }}
 
-      - name: Run Windows PowerShell (.NET HttpWebRequest)
-        shell: powershell
-        run: |
-          $proxy = '${{ steps.mitmproxy.outputs.proxy-url }}'
-          [System.Net.WebRequest]::DefaultWebProxy = New-Object System.Net.WebProxy($proxy, $true)
-          Invoke-WebRequest -Uri "http://httpbin.org/get?id=powershell" -UseBasicParsing
-          Invoke-WebRequest -Uri "https://httpbin.org/get?id=powershell" -UseBasicParsing
-        continue-on-error: true
-
-      - name: Run PowerShell Core (.NET HttpClient)
-        shell: pwsh
-        run: |
-          Invoke-WebRequest -Uri "http://httpbin.org/get?id=pwsh"
-          Invoke-WebRequest -Uri "https://httpbin.org/get?id=pwsh"
-        continue-on-error: true
-        env:
-          http_proxy: ${{ steps.mitmproxy.outputs.proxy-url }}
-          https_proxy: ${{ steps.mitmproxy.outputs.proxy-url }}
-
       - name: Run curl command (libcurl)
         shell: cmd
         run: |
@@ -60,3 +41,22 @@ jobs:
             netsh winhttp reset proxy
           }
         continue-on-error: true
+
+      - name: Run Windows PowerShell (.NET HttpWebRequest)
+        shell: powershell
+        run: |
+          $proxy = '${{ steps.mitmproxy.outputs.proxy-url }}'
+          [System.Net.WebRequest]::DefaultWebProxy = New-Object System.Net.WebProxy($proxy, $true)
+          Invoke-WebRequest -Uri "http://httpbin.org/get?id=powershell" -UseBasicParsing
+          Invoke-WebRequest -Uri "https://httpbin.org/get?id=powershell" -UseBasicParsing
+        continue-on-error: true
+
+      - name: Run PowerShell Core (.NET HttpClient)
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri "http://httpbin.org/get?id=pwsh"
+          Invoke-WebRequest -Uri "https://httpbin.org/get?id=pwsh"
+        continue-on-error: true
+        env:
+          http_proxy: ${{ steps.mitmproxy.outputs.proxy-url }}
+          https_proxy: ${{ steps.mitmproxy.outputs.proxy-url }}
