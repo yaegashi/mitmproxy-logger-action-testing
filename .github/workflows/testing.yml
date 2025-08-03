@@ -32,10 +32,7 @@ jobs:
           # Example: test HTTP requests
           curl http://httpbin.org/get
           curl -k https://httpbin.org/get
-          
-          # Your actual test commands would go here
-          # npm test
-          # python -m pytest
-          # etc.
+
+          ls -lR
       
       # mitmproxy will automatically stop and upload artifacts when the job completes
