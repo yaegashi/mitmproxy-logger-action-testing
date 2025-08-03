@@ -35,8 +35,8 @@ jobs:
         run: |
           try {
             netsh winhttp set proxy ${{ steps.mitmproxy.outputs.proxy-url }}
-            certutil -urlcache -split -f "http://httpbin.org/get?id=certutil" NUL
-            certutil -urlcache -split -f "https://httpbin.org/get?id=certutil" NUL
+            bitsadmin /transfer http "http://httpbin.org/get?id=bitsadmin" NUL
+            bitsadmin /transfer https "https://httpbin.org/get?id=bitsadmin" NUL
           } finally {
             netsh winhttp reset proxy
           }
