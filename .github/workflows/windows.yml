@@ -31,6 +31,8 @@ jobs:
         run: |
           Invoke-WebRequest -Uri "http://httpbin.org/get" -UseBasicParsing
           Invoke-WebRequest -Uri "https://httpbin.org/get" -UseBasicParsing
+          Invoke-RestMethod -Uri http://www.google.com
+          Invoke-RestMethod -Uri http://portal.azure.com
         continue-on-error: true
 
       - name: Reset WinHTTP Proxy
@@ -43,6 +45,8 @@ jobs:
         run: |
           curl -v http://httpbin.org/get
           curl -v https://httpbin.org/get
+          curl -k https://www.google.com
+          curl -k https://portal.azure.com
         continue-on-error: true
         env:
           http_proxy: ${{ steps.mitmproxy.outputs.proxy-url }}
