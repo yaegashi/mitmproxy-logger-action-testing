@@ -25,27 +25,22 @@ jobs:
       - name: Run tests with proxy
         shell: powershell
         run: |
-          # Set proxy environment variables for PowerShell/Windows
-          $env:HTTP_PROXY = "${{ steps.mitmproxy.outputs.proxy-url }}"
-          $env:HTTPS_PROXY = "${{ steps.mitmproxy.outputs.proxy-url }}"
-          
-          # Example: test HTTP requests using PowerShell
           Invoke-WebRequest -Uri "http://httpbin.org/get" -UseBasicParsing
           Invoke-WebRequest -Uri "https://httpbin.org/get" -UseBasicParsing
-          
-          # Your actual test commands would go here
-          # npm test
-          # python -m pytest
-          # etc.
+        continue-on-error: true
+        env:
+          HTTP_PROXY: ${{ steps.mitmproxy.outputs.proxy-url }}
+          HTTPS_PROXY: ${{ steps.mitmproxy.outputs.proxy-url }}
       
       # Alternative using curl on Windows (if available)
       - name: Test with curl (if available)
         shell: cmd
         run: |
-          set HTTP_PROXY=${{ steps.mitmproxy.outputs.proxy-url }}
-          set HTTPS_PROXY=${{ steps.mitmproxy.outputs.proxy-url }}
           curl http://httpbin.org/get
           curl https://httpbin.org/get
         continue-on-error: true
+        env:
+          HTTP_PROXY: ${{ steps.mitmproxy.outputs.proxy-url }}
+          HTTPS_PROXY: ${{ steps.mitmproxy.outputs.proxy-url }}
       
       # mitmproxy will automatically stop and upload artifacts when the job completes
