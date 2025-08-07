@@ -13,7 +13,7 @@ jobs:
 
       - name: Start mitmproxy
         id: mitmproxy
-        uses: yaegashi/mitmproxy-logger-action@v0.0.20
+        uses: yaegashi/mitmproxy-logger-action@copilot/fix-230e6040-839e-44f8-81e1-1ffa46aa016e
         with:
           enabled: true
           listen-host: '127.0.0.1'
